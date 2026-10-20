@@ -34,7 +34,7 @@ Los planes y precios iniciales están en `src/config.js`. Cambialos antes de ace
 
 El prototipo permite seleccionar videos del dispositivo, subirlos al almacenamiento local del Codespace, asignarles un número correlativo, publicar artículos, reproducirlos y registrar vistas/ventas de prueba. Es independiente del bot, su `.env` y la base de suscripciones. No contacta un proveedor de video: reproduce el archivo original y no genera HLS.
 
-La vista de cliente y el panel de modelo son solo modos del demo, sin autenticación ni roles; el panel de administración web no está implementado. No uses estas vistas para gestionar cuentas o pagos reales ni expongas el puerto públicamente. Consulta [TODO.md](./TODO.md) para el alcance y los requisitos pendientes.
+Este demo anterior sigue sin autenticación y no debe usarse para gestionar pagos reales. El nuevo prototipo Next está en [`apps/panel`](../apps/panel/README.md): incorpora un panel de modelo protegido por código, catálogo con PostgreSQL y vista de socio con token firmado. La reproducción de Cloudflare aún no está firmada, el panel admin y los roles de cliente no están implementados, y Mercado Pago sigue inactivo. Consulta [TODO.md](./TODO.md) para las tareas pendientes.
 
 ```sh
 cd Secyposbot

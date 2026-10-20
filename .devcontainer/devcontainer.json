@@ -3,10 +3,14 @@
   "hostRequirements": {
     "cpus": 4
   },
-  "forwardPorts": [3000],
+  "forwardPorts": [3000, 3001],
   "portsAttributes": {
     "3000": {
       "label": "Demo de catálogo",
+      "onAutoForward": "openBrowser"
+    },
+    "3001": {
+      "label": "Panel privado",
       "onAutoForward": "openBrowser"
     }
   },
