@@ -24,7 +24,8 @@
 
 - [ ] Configurar el remoto Git del repositorio destino y confirmar la rama de publicacion.
 - [ ] Revisar los archivos a publicar y excluir `.env`, bases de datos, videos, `node_modules` y configuracion local.
-- [ ] Ejecutar pruebas y comprobaciones; crear el commit y subirlo al remoto autorizado.
+- [x] Ejecutar pruebas y comprobaciones; crear el commit local `9ee73e6` (8 pruebas aprobadas).
+- [ ] Subir el commit al remoto autorizado cuando se configure la URL.
 
 ## Estado actual
 
