@@ -22,10 +22,10 @@
 
 ## Publicacion
 
-- [ ] Configurar el remoto Git del repositorio destino y confirmar la rama de publicacion.
+- [x] Configurar `origin` con el repositorio destino y confirmar la rama `main`.
 - [ ] Revisar los archivos a publicar y excluir `.env`, bases de datos, videos, `node_modules` y configuracion local.
-- [x] Ejecutar pruebas y comprobaciones; crear el commit local `9ee73e6` (8 pruebas aprobadas).
-- [ ] Subir el commit al remoto autorizado cuando se configure la URL.
+- [x] Ejecutar pruebas y comprobaciones; crear los commits locales `9ee73e6` y `f0b1890` (8 pruebas aprobadas).
+- [ ] Subir los commits al remoto autorizado cuando GitHub tenga una sesion autenticada en este entorno.
 
 ## Estado actual
 
