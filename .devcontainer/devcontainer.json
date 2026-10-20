@@ -3,6 +3,13 @@
   "hostRequirements": {
     "cpus": 4
   },
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Demo de catálogo",
+      "onAutoForward": "openBrowser"
+    }
+  },
   "waitFor": "onCreateCommand",
   "updateContentCommand": "python3 -m pip install -r requirements.txt",
   "postCreateCommand": "",

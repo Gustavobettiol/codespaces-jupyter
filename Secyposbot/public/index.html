@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111827">
+    <title>Demo · Catálogo privado</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Inicio">CATÁLOGO <span>DEMO</span></a>
+      <span class="privacy">Prueba local · no publiques este puerto</span>
+    </header>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">PROTOTIPO EN CODESPACES</p>
+        <h1>Tu catálogo,<br><span>en movimiento.</span></h1>
+        <p>Sube un video desde este dispositivo, define su acceso y pruébalo como cliente.</p>
+        <div class="mode-switch" role="tablist" aria-label="Vistas del demo">
+          <button class="mode active" data-mode="studio" role="tab" aria-selected="true">Panel de modelo</button>
+          <button class="mode" data-mode="customer" role="tab" aria-selected="false">Vista cliente</button>
+        </div>
+      </section>
+
+      <section id="studio" class="panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">01 — SUBIDA DIRECTA AL DEMO</p><h2>Nuevo artículo</h2></div>
+          <span class="limit">MP4 · MOV · M4V · WEBM · hasta 500 MiB</span>
+        </div>
+        <label class="dropzone" id="dropzone">
+          <input id="video-file" type="file" accept="video/mp4,video/quicktime,video/x-m4v,video/webm,video/ogg,video/x-matroska,.mp4,.mov,.m4v,.webm,.ogv,.mkv">
+          <span class="upload-icon" aria-hidden="true">↑</span>
+          <strong id="file-label">Elige un video de tu galería</strong>
+          <small>En móvil se abrirán las opciones de fotos/archivos del dispositivo.</small>
+        </label>
+        <div id="upload-status" class="status" role="status" aria-live="polite"></div>
+        <div id="editor" class="editor hidden">
+          <div class="catalog-badge" id="catalog-badge"></div>
+          <div class="form-grid">
+            <label>Título<input id="title" maxlength="120" placeholder="Ej. Sesión de verano"></label>
+            <label>Nivel mínimo
+              <select id="tier"><option value="base">Base</option><option value="plus">Plus</option><option value="vip">VIP</option></select>
+            </label>
+            <label>Precio de desbloqueo (USD)<input id="price" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+            <label>Estado
+              <select id="publish"><option value="draft">Borrador</option><option value="published">Publicado</option></select>
+            </label>
+          </div>
+          <button id="save-asset" class="button primary">Guardar artículo</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">02 — CONTROL Y RESULTADOS</p><h2>Artículos</h2></div>
+          <div class="catalog-actions">
+            <label id="tier-filter" class="tier-filter hidden">Tu nivel
+              <select id="customer-tier"><option value="base">Base</option><option value="plus">Plus</option><option value="vip">VIP</option></select>
+            </label>
+            <button id="refresh" class="button quiet">Actualizar</button>
+          </div>
+        </div>
+        <div id="assets" class="asset-list"></div>
+      </section>
+
+      <section class="note">
+        <strong>Demo seguro y local</strong>
+        <p>Los archivos quedan en el almacenamiento del Codespace. No se envían a Telegram ni a un proveedor de video. La reproducción usa el archivo original (sin HLS); pagos, autenticación, enlaces firmados y transmisiones aún no están conectados.</p>
+      </section>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
