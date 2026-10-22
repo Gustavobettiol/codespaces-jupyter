@@ -5,6 +5,7 @@ import { getDb } from "@/db";
 import { assetEvent, contentAsset } from "@/db/schema";
 import { hasStudioSession } from "@/lib/auth";
 import { currentModel } from "@/lib/model";
+import PlanCards from "@/app/planes/plan-cards";
 import {
   AssetEditor,
   LogoutButton,
@@ -48,6 +49,7 @@ export default async function StudioPage() {
         <Link className="brand" href="/">CATÁLOGO <span>STUDIO</span></Link>
         <div className="top-actions">
           <span className="muted" style={{ fontSize: 11 }}>{studioModel.nombre}</span>
+          <Link className="button quiet" href="/studio/models">Crear modelo</Link>
           <LogoutButton />
         </div>
       </header>
@@ -148,6 +150,17 @@ export default async function StudioPage() {
           </div>
         </div>
         <MemberInviteForm />
+      </section>
+
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">04 — PLANES PREMIUM</p>
+            <h2>Información de membresías</h2>
+            <p>Precios actuales del bot, vigencia y alcance de cada nivel.</p>
+          </div>
+        </div>
+        <PlanCards />
       </section>
 
       <aside className="notice">

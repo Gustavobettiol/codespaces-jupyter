@@ -71,3 +71,49 @@ export const assetEvent = pgTable(
   },
   (table) => [index("idx_ev_asset_tipo").on(table.assetId, table.tipo)],
 );
+
+export const memberChatMessage = pgTable(
+  "member_chat_message",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    tokenHash: text("token_hash").notNull(),
+    role: text("role").notNull(),
+    content: text("content").notNull(),
+    creado: timestamp("creado", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("idx_member_chat_token_creado").on(table.tokenHash, table.creado, table.id)],
+);
+
+export const avatarModel = pgTable(
+  "avatar_model",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studioModelId: uuid("studio_model_id")
+      .notNull()
+      .references(() => model.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description").notNull(),
+    imageData: text("image_data").notNull(),
+    imageType: text("image_type").notNull(),
+    creado: timestamp("creado", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("idx_avatar_model_studio").on(table.studioModelId)],
+);
+
+export const avatarScene = pgTable(
+  "avatar_scene",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    avatarModelId: uuid("avatar_model_id")
+      .notNull()
+      .references(() => avatarModel.id, { onDelete: "cascade" }),
+    preset: text("preset").notNull(),
+    imageData: text("image_data").notNull(),
+    imageType: text("image_type").notNull(),
+    creado: timestamp("creado", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("idx_avatar_scene_model").on(table.avatarModelId),
+    unique("idx_avatar_scene_model_preset").on(table.avatarModelId, table.preset),
+  ],
+);

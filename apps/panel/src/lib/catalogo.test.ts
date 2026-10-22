@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { canViewTier } from "./tiers";
 import { verifyWebhookSignature } from "./cloudflare-signature";
+import { premiumPlans } from "./plans";
 
 describe("niveles de acceso", () => {
   it("permite ver contenido del mismo nivel o inferior", () => {
@@ -9,6 +10,16 @@ describe("niveles de acceso", () => {
     expect(canViewTier("plus", "base")).toBe(true);
     expect(canViewTier("plus", "vip")).toBe(false);
     expect(canViewTier("vip", "vip")).toBe(true);
+  });
+});
+
+describe("planes premium", () => {
+  it("muestra los precios actuales del bot sin inventar importes ni ciclos", () => {
+    expect(premiumPlans.map(({ code, priceUsd, days }) => ({ code, priceUsd, days }))).toEqual([
+      { code: "base", priceUsd: 15, days: 30 },
+      { code: "plus", priceUsd: 30, days: 30 },
+      { code: "vip", priceUsd: 50, days: 30 },
+    ]);
   });
 });
 

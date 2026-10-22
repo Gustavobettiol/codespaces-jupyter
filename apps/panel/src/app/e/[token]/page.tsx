@@ -47,7 +47,10 @@ export default async function MemberPage({
     <main className="shell">
       <header className="topbar">
         <Link className="brand" href="/">CATÁLOGO <span>PRIVADO</span></Link>
-        <span className="pill ready">{member.tier.toUpperCase()}</span>
+        <div className="top-actions">
+          <Link className="button quiet" href="/planes">Planes premium</Link>
+          <span className="pill ready">{member.tier.toUpperCase()}</span>
+        </div>
       </header>
       <section className="member-header">
         <p className="eyebrow">CONTENIDO PARA SOCIOS</p>
@@ -55,6 +58,9 @@ export default async function MemberPage({
         <p className="muted" style={{ fontSize: 13 }}>
           {studioModel.nombre} · Nivel {member.tier.toUpperCase()}
         </p>
+        <Link className="button primary room-link" href={`/e/${encodeURIComponent(token)}/sala`}>
+          Entrar a la sala del avatar
+        </Link>
       </section>
       {visibleAssets.length === 0 ? (
         <div className="empty">Aún no hay contenido publicado para tu nivel.</div>
