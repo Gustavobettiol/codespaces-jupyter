@@ -1,0 +1,1 @@
+STUDIO_URL=https://curly-meme-6j9x777v6j7hr9w-3001.app.github.dev/studio

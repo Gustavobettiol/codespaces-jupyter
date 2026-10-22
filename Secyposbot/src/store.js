@@ -2,6 +2,16 @@ import { db } from "./db.js";
 import { calculateExpiry, formatAlias } from "./domain.js";
 
 const findSubscriber = db.prepare("SELECT * FROM subscribers WHERE telegram_id = ?");
+const findThread = db.prepare(`
+  SELECT telegram_id FROM threads
+  WHERE admin_chat_id = ? AND admin_message_id = ?
+`);
+const insertThread = db.prepare(`
+  INSERT INTO threads (admin_chat_id, admin_message_id, telegram_id)
+  VALUES (?, ?, ?)
+  ON CONFLICT (admin_chat_id, admin_message_id)
+  DO UPDATE SET telegram_id = excluded.telegram_id
+`);
 
 const ensureSubscriberTransaction = db.transaction((telegramId, username, now) => {
   const existing = findSubscriber.get(telegramId);
@@ -30,6 +40,14 @@ export function ensureSubscriber(telegramId, username = null, now = Date.now()) 
 
 export function getSubscriber(telegramId) {
   return findSubscriber.get(telegramId) ?? null;
+}
+
+export function saveThread(adminChatId, adminMessageId, telegramId) {
+  insertThread.run(adminChatId, adminMessageId, telegramId);
+}
+
+export function getThreadTelegramId(adminChatId, adminMessageId) {
+  return findThread.get(adminChatId, adminMessageId)?.telegram_id ?? null;
 }
 
 export function getPayment(paymentId) {

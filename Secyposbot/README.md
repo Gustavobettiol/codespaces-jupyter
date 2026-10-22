@@ -1,4 +1,8 @@
-# Secyposbot
+start - Iniciar y consultar mi acceso
+planes - Ver los planes disponibles
+pagar - Elegir un plan y enviar comprobante
+estado - Consultar estado y vencimiento
+acceso - Obtener enlace de ingreso si tengo acceso activo# Secyposbot
 
 Bot de Telegram para administrar suscripciones a un canal privado con revisión manual de pagos.
 
@@ -16,7 +20,9 @@ npm install
 cp .env.example .env
 ```
 
-Completa `.env` con el token del bot, el ID negativo del canal y los IDs numéricos de los administradores. Nunca subas `.env` al repositorio. El bot necesita permiso para invitar usuarios y restringir miembros. Inicia una conversación privada con el bot desde cada cuenta administradora antes de probar notificaciones.
+Completa `.env` con `BOT_TOKEN` (de BotFather), `CHANNEL_ID` (ID negativo del canal) y `ADMIN_IDS` (IDs numéricos separados por coma). `MODEL_NAME`, `PAY_ALIAS`, `STUDIO_URL`, `DB_PATH` y `TIMEZONE` son opcionales y tienen valores predeterminados. Nunca subas `.env` al repositorio. El bot necesita permiso para invitar usuarios y restringir miembros. Inicia una conversación privada con el bot desde cada cuenta administradora antes de probar notificaciones.
+
+Al arrancar, el bot elimina un webhook anterior sin descartar updates pendientes y usa Long Polling; así no depende de una URL pública ni de un túnel. Mantén una sola instancia del bot en ejecución. Para recibir mensajes generales de grupos, desactiva **Privacy Mode** en BotFather con `/setprivacy` → selecciona el bot → **Disable**, o haz administrador al bot. Para recibir publicaciones y responder en un canal, el bot debe ser administrador y tener permiso para publicar mensajes.
 
 Para obtener los IDs, puedes consultar tu ID numérico y el ID del canal reenviando una publicación del canal a un bot de consulta de IDs de Telegram. El ID del canal privado suele comenzar con `-100`. En `ADMIN_IDS`, escribe solo números separados por coma, sin corchetes.
 
@@ -29,6 +35,7 @@ npm run doctor
 El comando no imprime ni transmite el token; consulta a Telegram y muestra el usuario del bot, el título del canal y el resultado de los permisos necesarios.
 
 Los planes y precios iniciales están en `src/config.js`. Cambialos antes de aceptar pagos.
+Al iniciar, el bot publica `/start`, `/planes`, `/pagar`, `/estado` y `/acceso` en el menú de Telegram. El botón de menú **Abrir app** abre el estudio web. Configura `STUDIO_URL` en `.env` cuando cambie la URL; debe usar HTTPS.
 
 ## Demo web local de catálogo y videos
 
@@ -56,7 +63,7 @@ npm run check
 npm run dev
 ```
 
-Para iniciar en primer plano, usa `npm start`. El proceso aplica el esquema al iniciar, recibe updates por long polling y ejecuta el barrido de vencimientos cada hora. Ejecuta una sola instancia para evitar conflictos de polling y tareas duplicadas.
+Para iniciar en primer plano desde la raíz del repositorio, ejecuta `cd Secyposbot && npm start`. En Codespaces, usa la terminal integrada y deja esa terminal abierta. El proceso aplica el esquema al iniciar, registra `/start` y otros comandos, confirma mensajes de texto y publicaciones de canal con `OK / Bot Activo`, recibe `message` y `channel_post` por Long Polling y ejecuta el barrido de vencimientos cada hora. Ejecuta una sola instancia para evitar conflictos de polling y tareas duplicadas.
 
 ## Flujo de operación
 
@@ -68,7 +75,9 @@ Para iniciar en primer plano, usa `npm start`. El proceso aplica el esquema al i
 6. El bot aprueba la solicitud solo si la suscripción sigue activa.
 7. El proceso avisa cuando faltan tres días y retira el acceso al vencer.
 
-Comandos de usuario: `/start`, `/planes`, `/pagar`, `/estado`, `/acceso`.
+Los mensajes libres de los socios se copian a cada administrador con su alias y estado. Para responder, el administrador debe responder citando el mensaje copiado; el bot copiará su respuesta al socio. Esto admite los tipos de mensaje que Telegram permite copiar. Los comprobantes de texto/foto conservan sus botones de aprobación y también quedan asociados al socio para responderlos.
+
+Comandos de usuario: `/start`, `/planes`, `/pagar`, `/estado`, `/acceso`. También están disponibles desde el menú de Telegram. El botón **Abrir app** abre el panel de estudio configurado en `STUDIO_URL`; el panel puede solicitar iniciar sesión.
 
 Comandos de administrador: `/link`, `/lista`, `/sweep`.
 

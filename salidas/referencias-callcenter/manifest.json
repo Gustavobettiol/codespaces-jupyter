@@ -1,0 +1,29 @@
+{
+  "personaje": "Valeria, telefonista adulta ficticia de un call center argentino",
+  "imagen": "operadora-callcenter.png",
+  "audios": [
+    {
+      "archivo": "01-saludo.wav",
+      "texto": "Hola, buen día. Te habla Valeria, del centro de atención al cliente. ¿Cómo estás? Contame, ¿en qué te puedo ayudar hoy? Si querés, revisamos tu consulta juntas y vemos la mejor manera de resolverlo.",
+      "voz": "es_AR-daniela-high (voz femenina sintética, español argentino)"
+    },
+    {
+      "archivo": "02-asistencia.wav",
+      "texto": "Sí, claro, te ayudo con eso. Para ubicar tu compra, ¿me pasás el número de pedido y el correo que usaste? Dame un segundito, por favor, ya lo estoy revisando. Mientras tanto, quedate en línea, ¿sí?",
+      "voz": "es_AR-daniela-high (voz femenina sintética, español argentino)"
+    },
+    {
+      "archivo": "03-despedida.wav",
+      "texto": "Te cuento: ya dejé cargado tu reclamo y te va a llegar una actualización por correo. ¿Querés que repasemos algo más antes de cerrar? Gracias por comunicarte. Cualquier cosa, llamanos de nuevo, estamos para darte una mano. Que tengas un lindo día.",
+      "voz": "es_AR-daniela-high (voz femenina sintética, español argentino)"
+    },
+    {
+      "archivo": "04-asistencia-vip-ar.wav",
+      "texto": "Hola, buen día. Soy Valeria, asesora de atención VIP. Contame qué tipo de acompañamiento estás buscando y para cuándo. Te explico las opciones, la disponibilidad y los valores con total claridad y discreción. Si querés, también puedo resolver tus dudas por acá.",
+      "voz": "es_AR-daniela-high (voz femenina sintética, español argentino)"
+    }
+  ],
+  "nota": "Ilustración original y audios TTS generados localmente. Personaje ficticio; no representa ni clona a una persona real. La voz es una demostración sintética, no una referencia autorizada para clonar.",
+  "atribucion_modelo_voz": "csukuangfj/vits-piper-es_AR-daniela-high; modelo entrenado por larcanio/piper-voices; dataset OpenSLR 61; licencia indicada en su MODEL_CARD: CC BY-SA 4.0.",
+  "referencia_visual": "brief-avatar-fotorrealista.txt"
+}

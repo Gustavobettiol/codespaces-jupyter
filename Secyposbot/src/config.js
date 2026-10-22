@@ -20,12 +20,21 @@ if (!/^-?\d+$/.test(channelId)) {
   throw new Error("CHANNEL_ID debe ser un ID numérico de Telegram, por ejemplo -1001234567890.");
 }
 
+const studioUrl = new URL(
+  process.env.STUDIO_URL?.trim()
+    || "https://curly-meme-6j9x777v6j7hr9w-3001.app.github.dev/studio",
+);
+if (studioUrl.protocol !== "https:" || studioUrl.username || studioUrl.password) {
+  throw new Error("STUDIO_URL debe ser una URL HTTPS válida.");
+}
+
 export const config = Object.freeze({
   botToken: required("BOT_TOKEN"),
   channelId,
   adminIds: parseAdminIds(required("ADMIN_IDS")),
   modelName: process.env.MODEL_NAME?.trim() || "Canal privado",
   payAlias: process.env.PAY_ALIAS?.trim() || "",
+  studioUrl: studioUrl.toString(),
   dbPath: resolve(process.env.DB_PATH || "./data/secyposbot.sqlite"),
   timezone: process.env.TIMEZONE?.trim() || "UTC",
 });

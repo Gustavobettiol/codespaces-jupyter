@@ -1,0 +1,7 @@
+{
+  "name": "Sofía",
+  "age": 24,
+  "trigger": "sofiaArg",
+  "appearance": "adult Argentine woman, long dark wavy hair, olive skin, brown eyes, natural makeup",
+  "negative_prompt": "child, minor, cartoon, 3d render, plastic skin, oversaturated, extra fingers, deformed hands, watermark, text"
+}

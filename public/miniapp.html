@@ -1,0 +1,83 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Argentina AI</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#0b0b12;--card:#17171f;--ac:#ff3d81}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:#f2f2f5;font:15px/1.4 system-ui;padding-bottom:86px}
+header{padding:14px 16px;border-bottom:1px solid #22222c;position:sticky;top:0;background:var(--bg);z-index:9}
+h1{font-size:17px;margin-bottom:10px}.tabs{display:flex;gap:8px}
+.tab{flex:1;text-align:center;padding:9px;border-radius:10px;background:var(--card);border:1px solid #262633;font-weight:700}
+.tab.on{background:var(--ac);border-color:var(--ac);color:#0b0b12}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}
+.grid img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px}
+.bar{position:fixed;bottom:0;left:0;right:0;background:#12121a;border-top:1px solid #262633;padding:10px 12px;display:flex;gap:8px}
+input,select{background:#0b0b12;border:1px solid #2c2c3a;color:#fff;border-radius:10px;padding:12px;font-size:15px}
+#p{flex:1;min-width:0}
+button{background:var(--ac);border:0;color:#0b0b12;font-weight:800;border-radius:10px;padding:12px 16px}
+#msgs{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:60vh}
+.m{padding:10px 13px;border-radius:14px;max-width:82%;font-size:15px}
+.myo{background:#23232f;align-self:flex-end}
+.mella{background:#2a1626;border:1px solid #ff3d8140;align-self:flex-start}
+.pro{padding:16px}
+.pro .box{background:linear-gradient(120deg,#1a0f2e,#0f1a2e);border:2px solid #F6B40E;border-radius:18px;padding:18px}
+.pro b{color:#F6B40E;font-size:20px}.pro p{color:#c8c8d6;font-size:14px;margin:8px 0 14px}
+</style></head><body>
+<header><h1>🇦🇷 Argentina AI</h1>
+<div class="tabs"><div class="tab on" data-t="fotos">Fotos</div><div class="tab" data-t="chat">Chat</div><div class="tab" data-t="pro">PRO</div></div></header>
+<div id="fotos"><div class="grid" id="gal"></div></div>
+<div id="chat" style="display:none"><div id="msgs"></div></div>
+<div id="pro" style="display:none"><div class="pro"><div class="box">
+<b>CREÁ TU PROPIA MODELO</b><p>Nombre, cara, cuerpo y personalidad. Te habla a vos.</p>
+<button id="btnpro">Suscribirme</button>
+</div></div></div>
+<div class="bar" id="barra">
+<select id="sel"></select><input id="p" placeholder="en la cama, sábanas blancas"><button id="go">Generar</button>
+</div>
+<script>
+const P = new URLSearchParams(location.search);
+const API = P.get("api") || localStorage.getItem("api") || location.origin;
+localStorage.setItem("api", API);
+const tg = window.Telegram.WebApp; tg.ready(); tg.expand();
+tg.setHeaderColor("#0b0b12"); tg.setBackgroundColor("#0b0b12");
+const H = { "Content-Type":"application/json", "X-Telegram-Init-Data": tg.initData };
+let clave = "camila";
+
+fetch(API + "/api/elenco").then(r=>r.json()).then(l=>{
+  document.getElementById("sel").innerHTML = l.map(p=>`<option value="${p.clave}">${p.nombre}, ${p.edad}</option>`).join("");
+}).catch(()=>{});
+document.getElementById("sel").onchange = e => { clave = e.target.value; };
+
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on")); t.classList.add("on");
+  for (const v of ["fotos","chat","pro"]) document.getElementById(v).style.display = "none";
+  document.getElementById(t.dataset.t).style.display = "block";
+  document.getElementById("barra").style.display = t.dataset.t === "pro" ? "none" : "flex";
+  if (t.dataset.t === "fotos") cargar();
+});
+
+async function cargar(){
+  const items = await fetch(API + "/api/galeria").then(r=>r.json()).catch(()=>[]);
+  document.getElementById("gal").innerHTML = items.slice(0,40).map(i=>`<img loading="lazy" src="${API}${i.url}">`).join("");
+}
+function push(txt, mia){
+  const d = document.createElement("div"); d.className = "m " + (mia ? "myo" : "mella");
+  d.textContent = txt; document.getElementById("msgs").appendChild(d);
+  window.scrollTo(0, document.body.scrollHeight);
+}
+document.getElementById("go").onclick = async () => {
+  const prompt = document.getElementById("p").value.trim(); if(!prompt) return;
+  const activo = document.querySelector(".tab.on").dataset.t;
+  if (activo === "fotos"){
+    push("📸 " + prompt, true); tg.HapticFeedback?.impactOccurred("medium");
+    const r = await fetch(API + "/api/foto", { method:"POST", headers:H, body: JSON.stringify({ clave, extra: prompt }) });
+    const j = await r.json(); j.ok ? cargar() : tg.showAlert(j.error);
+  } else {
+    push(prompt, true); document.getElementById("p").value = "";
+    const r = await fetch(API + "/api/chat", { method:"POST", headers:H, body: JSON.stringify({ clave, mensaje: prompt }) });
+    const j = await r.json(); push(j.ok ? j.respuesta : j.error, false);
+  }
+  document.getElementById("p").value = "";
+};
+cargar();
+</script></body></html>

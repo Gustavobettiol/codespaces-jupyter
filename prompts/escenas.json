@@ -1,0 +1,22 @@
+[
+  {
+    "id": "A-0001",
+    "prompt": "sofiaArg, adult Argentine woman, soft window light, shot on 85mm lens, shallow depth of field, cream knit sweater, cozy apartment, warm tones, photorealistic portrait",
+    "negative_prompt": "child, minor, cartoon, 3d render, plastic skin, oversaturated, extra fingers, deformed hands, watermark, text",
+    "seed": 42001,
+    "steps": 8,
+    "width": 1024,
+    "height": 1024,
+    "guion_id": "bienvenida"
+  },
+  {
+    "id": "A-0002",
+    "prompt": "sofiaArg, adult Argentine woman, golden hour on a rooftop in Buenos Aires, denim jacket, hair moving in the wind, city skyline blurred behind, backlit, warm rim light, film grain, 50mm lens, photorealistic",
+    "negative_prompt": "child, minor, cartoon, 3d render, plastic skin, deformed hands, watermark, text",
+    "seed": 42002,
+    "steps": 8,
+    "width": 1024,
+    "height": 1024,
+    "guion_id": "gracias"
+  }
+]

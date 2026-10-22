@@ -7,9 +7,11 @@ import {
   ensureSubscriber,
   getPayment,
   getSubscriber,
+  getThreadTelegramId,
   hasActiveAccess,
   listActiveSubscribers,
   rejectPayment,
+  saveThread,
   setPendingPlan,
 } from "./store.js";
 import { sweep } from "./sweep.js";
@@ -30,6 +32,8 @@ const paymentKeyboard = (paymentId) => new InlineKeyboard()
   .text("Aprobar pago", `payment:approve:${paymentId}`)
   .text("Rechazar", `payment:reject:${paymentId}`);
 
+const activeMessage = "OK / Bot Activo";
+
 async function notifyAdmins(bot, payment, subscriber) {
   const plan = planByCode(payment.plan_code);
   const caption = [
@@ -43,36 +47,66 @@ async function notifyAdmins(bot, payment, subscriber) {
 
   for (const adminId of config.adminIds) {
     try {
+      let message;
       if (payment.proof_file_id) {
-        await bot.api.sendPhoto(adminId, payment.proof_file_id, {
+        message = await bot.api.sendPhoto(adminId, payment.proof_file_id, {
           caption,
           reply_markup: paymentKeyboard(payment.id),
         });
       } else {
-        await bot.api.sendMessage(adminId, `${caption}\n\nComprobante:\n${payment.proof_text}`, {
+        message = await bot.api.sendMessage(adminId, `${caption}\n\nComprobante:\n${payment.proof_text}`, {
           reply_markup: paymentKeyboard(payment.id),
         });
       }
+      saveThread(adminId, message.message_id, subscriber.telegram_id);
     } catch (error) {
       console.error(`No se pudo notificar al admin ${adminId}:`, error.message);
     }
   }
 }
 
+async function forwardToAdmins(bot, ctx, subscriber) {
+  let delivered = 0;
+
+  for (const adminId of config.adminIds) {
+    try {
+      await bot.api.sendMessage(
+        adminId,
+        `Mensaje de ${subscriber.alias} · ${subscriber.status}`,
+      );
+      const copied = await bot.api.copyMessage(
+        adminId,
+        ctx.chat.id,
+        ctx.message.message_id,
+      );
+      saveThread(adminId, copied.message_id, subscriber.telegram_id);
+      delivered += 1;
+    } catch (error) {
+      console.error(`No se pudo reenviar un mensaje al admin ${adminId}:`, error.message);
+    }
+  }
+
+  return delivered;
+}
+
 export function createBot() {
   const bot = new Bot(config.botToken);
+  const userCommand = (command, handler) => bot.command(command, async (ctx, next) => {
+    if (!ctx.from) return next();
+    return handler(ctx);
+  });
 
-  bot.command("start", async (ctx) => {
+  userCommand("start", async (ctx) => {
     const subscriber = ensureSubscriber(ctx.from.id, ctx.from.username);
     const status = isSubscriptionActive(subscriber)
       ? `Tu acceso está activo hasta el ${date(subscriber.expires_at)}.`
       : "Todavía no tenés un acceso activo.";
     await ctx.reply(
-      `Acceso privado a ${config.modelName}.\n\nTu alias: ${subscriber.alias}\n${status}\n\nUsá /planes para ver opciones y /pagar para enviar un comprobante.`,
+      `${activeMessage}\n\nAcceso privado a ${config.modelName}.\n\nTu alias: ${subscriber.alias}\n${status}\n\nUsá /planes para ver opciones y /pagar para enviar un comprobante.`,
     );
   });
 
-  bot.command("planes", async (ctx) => {
+  userCommand("planes", async (ctx) => {
     const description = plans
       .map((plan) => `${plan.label}: USD ${plan.priceUsd} por ${plan.days} días`)
       .join("\n");
@@ -81,19 +115,24 @@ export function createBot() {
     });
   });
 
-  bot.command("pagar", async (ctx) => {
+  userCommand("pagar", async (ctx) => {
     ensureSubscriber(ctx.from.id, ctx.from.username);
     await ctx.reply("Elegí el plan que querés pagar:", { reply_markup: planKeyboard() });
   });
 
-  bot.command("estado", async (ctx) => {
+  userCommand("estado", async (ctx) => {
     const subscriber = getSubscriber(ctx.from.id);
     if (!subscriber) return ctx.reply("Todavía no tenés un registro. Usá /start.");
     const expiration = subscriber.expires_at ? date(subscriber.expires_at) : "sin fecha";
-    return ctx.reply(`Alias: ${subscriber.alias}\nEstado: ${subscriber.status}\nVencimiento: ${expiration}`);
+    const status = isSubscriptionActive(subscriber)
+      ? "activo"
+      : subscriber.status === "pending"
+        ? "pendiente"
+        : "vencido";
+    return ctx.reply(`Alias: ${subscriber.alias}\nEstado: ${status}\nVencimiento: ${expiration}`);
   });
 
-  bot.command("acceso", async (ctx) => {
+  userCommand("acceso", async (ctx) => {
     if (!hasActiveAccess(ctx.from.id)) {
       return ctx.reply("No tenés una suscripción activa. Usá /pagar para renovarla o solicitar acceso.");
     }
@@ -105,7 +144,7 @@ export function createBot() {
     return ctx.reply(`Tu enlace de acceso: ${link.invite_link}`);
   });
 
-  bot.command("link", async (ctx) => {
+  userCommand("link", async (ctx) => {
     if (!isAdmin(ctx.from.id)) return ctx.reply("No autorizado.");
     const link = await bot.api.createChatInviteLink({
       chat_id: config.channelId,
@@ -115,14 +154,14 @@ export function createBot() {
     return ctx.reply(`Enlace con solicitud de ingreso:\n${link.invite_link}`);
   });
 
-  bot.command("lista", async (ctx) => {
+  userCommand("lista", async (ctx) => {
     if (!isAdmin(ctx.from.id)) return ctx.reply("No autorizado.");
     const subscribers = listActiveSubscribers();
     const lines = subscribers.map((subscriber) => `${subscriber.alias} · ${subscriber.telegram_id} · vence ${date(subscriber.expires_at)}`);
     return ctx.reply(`Activos: ${subscribers.length}\n\n${lines.join("\n") || "ninguno"}`);
   });
 
-  bot.command("sweep", async (ctx) => {
+  userCommand("sweep", async (ctx) => {
     if (!isAdmin(ctx.from.id)) return ctx.reply("No autorizado.");
     const result = await sweep(bot);
     return ctx.reply(`Barrido terminado. Vencidos: ${result.expired}; avisos: ${result.warned}; errores: ${result.failed}.`);
@@ -209,28 +248,58 @@ export function createBot() {
     ).catch(() => {});
   });
 
-  bot.on(["message:text", "message:photo"], async (ctx) => {
-    if (ctx.message.text?.startsWith("/")) return;
-    if (isAdmin(ctx.from.id)) return;
+  bot.on("channel_post", async (ctx) => {
+    await ctx.reply(activeMessage);
+  });
 
-    const subscriber = getSubscriber(ctx.from.id);
-    if (!subscriber?.pending_plan_code) return;
-
-    const photo = ctx.message.photo?.at(-1);
-    const result = createPayment({
-      telegramId: ctx.from.id,
-      proofText: ctx.message.text?.slice(0, 2000) ?? ctx.message.caption?.slice(0, 2000) ?? null,
-      proofFileId: photo?.file_id ?? null,
-    });
-    if (!result.created) {
-      if (result.reason === "already-pending") {
-        return ctx.reply("Ya hay un comprobante pendiente de revisión. Te avisaremos cuando se procese.");
-      }
-      return ctx.reply("Elegí primero un plan con /pagar.");
+  bot.on("message", async (ctx) => {
+    if (!ctx.from) {
+      return ctx.reply(activeMessage);
     }
 
-    await notifyAdmins(bot, result.payment, result.subscriber);
-    return ctx.reply("Comprobante recibido. El acceso se activa cuando un administrador confirme el pago.");
+    if (isAdmin(ctx.from.id)) {
+      const repliedMessageId = ctx.message.reply_to_message?.message_id;
+      if (repliedMessageId !== undefined) {
+        const telegramId = getThreadTelegramId(ctx.chat.id, repliedMessageId);
+        if (telegramId !== null) {
+          await bot.api.copyMessage(telegramId, ctx.chat.id, ctx.message.message_id);
+          return ctx.reply("Enviado.");
+        }
+      }
+      return;
+    }
+
+    if (ctx.message.text?.startsWith("/")) return;
+
+    const subscriber = getSubscriber(ctx.from.id)
+      ?? ensureSubscriber(ctx.from.id, ctx.from.username);
+    const photo = ctx.message.photo?.at(-1);
+    const proofText = ctx.message.text?.slice(0, 2000)
+      ?? ctx.message.caption?.slice(0, 2000)
+      ?? null;
+
+    if (subscriber.pending_plan_code && (proofText || photo)) {
+      const result = createPayment({
+        telegramId: ctx.from.id,
+        proofText,
+        proofFileId: photo?.file_id ?? null,
+      });
+
+      if (result.created) {
+        await notifyAdmins(bot, result.payment, result.subscriber);
+        return ctx.reply(`${activeMessage}\n\nComprobante recibido. El acceso se activa cuando un administrador confirme el pago.`);
+      }
+
+      if (result.reason === "already-pending") {
+        return ctx.reply(`${activeMessage}\n\nYa hay un comprobante pendiente de revisión. Te avisaremos cuando se procese.`);
+      }
+    }
+
+    const delivered = await forwardToAdmins(bot, ctx, subscriber);
+    if (delivered === 0) {
+      return ctx.reply("No pude entregar tu mensaje a los administradores. Intentá de nuevo más tarde.");
+    }
+    return ctx.reply(activeMessage);
   });
 
   return bot;

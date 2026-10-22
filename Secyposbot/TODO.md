@@ -3,7 +3,7 @@
 ## Paneles web
 
 - [ ] Completar autenticacion web multiusuario y permisos de servidor para cliente, modelo y administrador. El prototipo Next usa un codigo compartido para el estudio y tokens firmados para socios, pero no tiene cuentas ni roles.
-- [ ] Completar el panel de cliente: perfil, nivel y vencimiento, historial de pagos, renovacion y contenido disponible. La primera pagina de socio firmada filtra el catalogo por nivel; pagos y suscripciones no estan conectados.
+- [ ] Completar el panel de cliente: perfil, nivel y vencimiento, historial de pagos, renovacion y contenido disponible. La pagina de planes ahora informa Base USD 15, Plus USD 30 y VIP USD 50 por 30 dias; la pagina de socio filtra el catalogo por nivel. No hay checkout, precios ARS ni pagos/suscripciones conectados.
 - [ ] Completar el panel de modelo en `apps/panel`: carga TUS a Cloudflare, correlativo atomico, webhook firmado, catalogo y tabla de metricas. Falta configurar servicios y probar una subida real de punta a punta.
 - [ ] Crear el panel de administracion: cuentas y roles, suscripciones, pagos pendientes, planes y registro de acciones.
 - [ ] Aislar los datos y archivos de cada modelo y comprobar los permisos en cada endpoint, no solo en la interfaz.

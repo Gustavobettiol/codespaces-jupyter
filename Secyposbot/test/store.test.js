@@ -15,7 +15,7 @@ migrate();
 const store = await import("../src/store.js");
 
 beforeEach(() => {
-  db.exec("DELETE FROM payments; DELETE FROM subscribers; UPDATE counters SET value = 0 WHERE name = 'alias';");
+  db.exec("DELETE FROM threads; DELETE FROM payments; DELETE FROM subscribers; UPDATE counters SET value = 0 WHERE name = 'alias';");
 });
 
 after(() => {
@@ -30,6 +30,15 @@ test("crear un registro asigna un alias y es idempotente", () => {
   assert.equal(first.alias, "Socio 001");
   assert.equal(again.alias, first.alias);
   assert.equal(again.requested_at, 1000);
+});
+
+test("los hilos distinguen mensajes iguales recibidos en distintos chats de administrador", () => {
+  store.saveThread(100, 25, 42);
+  store.saveThread(200, 25, 84);
+
+  assert.equal(store.getThreadTelegramId(100, 25), 42);
+  assert.equal(store.getThreadTelegramId(200, 25), 84);
+  assert.equal(store.getThreadTelegramId(100, 26), null);
 });
 
 test("el pago solo activa una vez y la renovación extiende el vencimiento", () => {

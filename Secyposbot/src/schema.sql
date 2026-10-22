@@ -36,3 +36,10 @@ CREATE TABLE IF NOT EXISTS payments (
 
 CREATE INDEX IF NOT EXISTS idx_payments_user_status
   ON payments (telegram_id, status);
+
+CREATE TABLE IF NOT EXISTS threads (
+  admin_chat_id INTEGER NOT NULL,
+  admin_message_id INTEGER NOT NULL,
+  telegram_id INTEGER NOT NULL,
+  PRIMARY KEY (admin_chat_id, admin_message_id)
+);

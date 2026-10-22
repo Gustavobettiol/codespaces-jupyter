@@ -1,0 +1,12 @@
+# Installed only in Modal GPU images, never in the Codespace environment.
+torch==2.13.0
+torchvision==0.28.0
+diffusers==0.35.1
+transformers>=4.45,<5
+accelerate>=1,<2
+peft>=0.17,<1
+datasets>=3,<5
+safetensors>=0.4
+huggingface_hub>=0.30
+Pillow>=10,<13
+numpy>=1.26,<3

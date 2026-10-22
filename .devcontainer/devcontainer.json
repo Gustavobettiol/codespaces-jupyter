@@ -1,31 +1,17 @@
 {
+  "name": "arg-ai",
   "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "hostRequirements": {
-    "cpus": 4
-  },
-  "forwardPorts": [3000, 3001],
-  "portsAttributes": {
-    "3000": {
-      "label": "Demo de catálogo",
-      "onAutoForward": "openBrowser"
-    },
-    "3001": {
-      "label": "Panel privado",
-      "onAutoForward": "openBrowser"
-    }
-  },
+  "hostRequirements": { "cpus": 2 },
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "python3 -m pip install -r requirements.txt",
-  "postCreateCommand": "",
+  "onCreateCommand": "npm install",
+  "updateContentCommand": "python3 -m pip install -r requirements.txt || true",
+  "postStartCommand": "pkill -f 'node src/index.js' 2>/dev/null; nohup npm start > server.log 2>&1 &",
+  "forwardPorts": [3001],
+  "portsAttributes": {
+    "3001": { "label": "API + Escena", "visibility": "public", "onAutoForward": "notify" }
+  },
   "customizations": {
-    "codespaces": {
-      "openFiles": []
-    },
-    "vscode": {
-      "extensions": [
-        "ms-toolsai.jupyter",
-        "ms-python.python"
-      ]
-    }
+    "codespaces": { "openFiles": ["README.md"] },
+    "vscode": { "extensions": ["ms-toolsai.jupyter", "ms-python.python"] }
   }
 }

@@ -1,0 +1,46 @@
+AVATAR FOTORREALISTA - ASESORA DE ATENCION VIP
+
+Personaje: Valeria, mujer adulta ficticia de 29 anos, asesora de atencion y
+ventas para un servicio argentino de acompanantes VIP. No representa a una
+empleada real ni a una persona conocida.
+
+PROMPT (ingles, para un modelo de imagen fotorrealista):
+
+Photorealistic corporate portrait photograph of Valeria, a fictional 29-year-old
+adult Argentine VIP client-services and sales consultant, warm attentive
+expression, empathetic confident professional, natural blue eyes, elegant
+black-framed glasses, dark brown hair neatly tied back in a polished bun,
+wearing a tailored charcoal blazer over a tasteful modest blouse and a dark
+knee-length pencil skirt, discreet professional headset with microphone,
+seated at a refined premium client-services office desk, softly lit modern
+Buenos Aires office, subtle Argentina-inspired details, direct friendly eye
+contact with camera, poised and welcoming posture, waist-up portrait, natural
+skin texture and realistic facial proportions, editorial corporate photography,
+soft flattering daylight, 85mm portrait lens, shallow depth of field, premium
+hospitality brand, refined and discreet, photoreal, high detail, vertical 9:16
+composition.
+
+NEGATIVE PROMPT:
+
+illustration, cartoon, anime, 3d render, CGI, doll, plastic skin, airbrushed,
+unrealistic face, exaggerated body proportions, lingerie, revealing clothing,
+deep cleavage, suggestive pose, sexualized styling, underage, child, teenager,
+extra fingers, deformed hands, asymmetrical eyes, watermark, text, logo.
+
+LOCUCION DE ASISTENCIA:
+
+Hola, buen día. Soy Valeria, asesora de atención VIP. Contame qué tipo de
+acompañamiento estás buscando y para cuándo. Te explico las opciones, la
+disponibilidad y los valores con total claridad y discreción. Si querés,
+también puedo resolver tus dudas por acá.
+
+LIMITES DE PRODUCCION:
+
+- Generar una persona adulta ficticia; no usar fotos de empleadas o clientes sin
+  autorización documentada.
+- Usar vestuario y encuadre de atención empresarial, sin sexualizar al
+  personaje.
+- Mantener el audio claramente sintético o contar con consentimiento explícito
+  si se sustituye por la voz de una persona real.
+- El modelo de imagen del proyecto necesita pesos disponibles y entorno GPU;
+  este Codespace no tiene una GPU remota configurada.

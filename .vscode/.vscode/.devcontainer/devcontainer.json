@@ -1,0 +1,17 @@
+{
+  "name": "venice-mcp",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "22" }
+  },
+  "hostRequirements": { "cpus": 2, "memory": "8gb" },
+  "postCreateCommand": "npm i -g --silent @veniceai/mcp-server@0.3.0",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "chat.mcp.enabled": true,
+        "chat.mcp.discovery.enabled": true
+      }
+    }
+  }
+}

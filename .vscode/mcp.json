@@ -1,0 +1,31 @@
+{
+	"servers": {
+		"huggingface/hf-mcp-server": {
+			"type": "http",
+			"url": "https://huggingface.co/mcp?login",
+			"gallery": "https://api.mcp.github.com",
+			"version": "1.0.0"
+		},
+		"venice": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["-y", "@veniceai/mcp-server@0.3.0"],
+			"env": {
+				"VENICE_API_KEY": "${input:venice-api-key}",
+				"VENICE_DEFAULT_CHAT_MODEL": "zai-org-glm-5-2"
+			}
+		},
+		"github": {
+			"type": "http",
+			"url": "https://api.githubcopilot.com/mcp/"
+		}
+	},
+	"inputs": [
+		{
+			"type": "promptString",
+			"id": "venice-api-key",
+			"description": "Venice API key",
+			"password": true
+		}
+	]
+}
